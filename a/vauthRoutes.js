@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { generateToken, hashPassword, verifyPassword, authenticateToken } = require('./authMiddleware');
+const { generateToken, hashPassword, verifyPassword, authenticateToken } = require('./ssss');
 
 const users = new Map();
 
