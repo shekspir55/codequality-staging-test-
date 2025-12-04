@@ -34,7 +34,7 @@ router.post('/register', (req, res) => {
         token
     });
 });
- //
+
 router.post('/login', (req, res) => {
     const { email, password } = req.body;
 
