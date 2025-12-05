@@ -1,15 +1,11 @@
 const EventEmitter = require('events');
 
-// TODO: Add TypeScript types for better IDE support
-// TODO: Consider using a dependency injection container
 class UserService extends EventEmitter {
     constructor(userRepository) {
         super();
         this.userRepository = userRepository;
         this.cache = new Map();
         this.cacheTimeout = 5 * 60 * 1000; // 5 minutes
-        // TODO: Make cache timeout configurable via constructor options
-        // TODO: Add Redis support for distributed caching
     }
 
     async findById(userId) {
@@ -27,14 +23,10 @@ class UserService extends EventEmitter {
 
     async findByEmail(email) {
         const normalizedEmail = email.toLowerCase().trim();
-        // TODO: Add email format validation here
         return this.userRepository.findByEmail(normalizedEmail);
     }
 
     async createUser(userData) {
-        // TODO: Add input validation using validationUtils
-        // TODO: Implement email verification flow
-        // TODO: Add support for OAuth providers (Google, GitHub)
         const { email, password, name, role = 'user' } = userData;
 
         const existingUser = await this.findByEmail(email);
