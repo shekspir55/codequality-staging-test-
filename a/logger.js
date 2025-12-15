@@ -2,6 +2,7 @@ const util = require('util');
 const fs = require('fs');
 const path = require('path');
 
+// TODO: Add TRACE and FATAL levels
 const LogLevel = {
     ERROR: 0,
     WARN: 1,
@@ -135,6 +136,7 @@ class FileTransport {
     }
 
     rotate() {
+        // FIXME: Rotation is synchronous and may block event loop
         this.stream.end();
 
         for (let i = this.maxFiles - 1; i >= 1; i--) {
@@ -170,6 +172,7 @@ function createLogger(name, options = {}) {
 
 const defaultLogger = new Logger();
 
+// TODO: Add structured JSON logging transport
 
 module.exports = {
     Logger,

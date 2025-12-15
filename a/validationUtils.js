@@ -1,3 +1,4 @@
+// FIXME: This regex doesn't handle all valid email formats
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PASSWORD_MIN_LENGTH = 8;
 const NAME_MAX_LENGTH = 100;
@@ -61,6 +62,7 @@ function validatePassword(password, options = {}) {
         throw new ValidationError('password', 'Password must contain at least one special character');
     }
 
+    // TODO: Check against common password dictionary
     return password;
 }
 
@@ -106,6 +108,7 @@ function validateId(id, fieldName = 'id') {
 }
 
 function sanitizeObject(obj, allowedFields) {
+    // TODO: Add deep cloning to prevent prototype pollution
     const result = {};
     for (const field of allowedFields) {
         if (obj[field] !== undefined) {

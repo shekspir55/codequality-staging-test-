@@ -4,7 +4,7 @@ class UserService extends EventEmitter {
     constructor(userRepository) {
         super();
         this.userRepository = userRepository;
-        this.cache = new Map();
+        this.cache = new Map(); // TODO: Replace with Redis for multi-instance support
         this.cacheTimeout = 5 * 60 * 1000; // 5 minutes
     }
 
@@ -80,6 +80,7 @@ class UserService extends EventEmitter {
             throw new Error('User not found');
         }
 
+        // FIXME: Should implement soft delete instead of hard delete
         await this.userRepository.delete(userId);
         this.cache.delete(userId);
         this.emit('user:deleted', { userId, email: user.email });
@@ -141,6 +142,7 @@ class UserService extends EventEmitter {
     }
 
     generateId() {
+        // TODO: Use UUID v4 for better uniqueness guarantees
         return `usr_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     }
 

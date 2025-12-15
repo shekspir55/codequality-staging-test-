@@ -8,11 +8,12 @@ class RateLimiter {
         this.skip = options.skip || (() => false);
         this.onLimitReached = options.onLimitReached || null;
 
-        this.store = new Map();
+        this.store = new Map(); // FIXME: Won't work in clustered environment
         this.cleanupInterval = setInterval(() => this.cleanup(), this.windowMs);
     }
 
     defaultKeyGenerator(req) {
+        // TODO: Handle X-Forwarded-For for proxy scenarios
         return req.ip || req.connection.remoteAddress || 'unknown';
     }
 
@@ -95,6 +96,8 @@ class RateLimiter {
         clearInterval(this.cleanupInterval);
         this.store.clear();
     }
+
+    // TODO: Add getStats() method for monitoring
 }
 
 function createRateLimiter(options) {
