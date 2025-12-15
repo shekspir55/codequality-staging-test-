@@ -1,4 +1,15 @@
+/**
+ * Rate limiter middleware for Express applications
+ * Implements a fixed window rate limiting algorithm
+ */
 class RateLimiter {
+    /**
+     * @param {Object} options - Configuration options
+     * @param {number} options.windowMs - Time window in milliseconds
+     * @param {number} options.maxRequests - Maximum requests per window
+     * @param {string} options.message - Error message when limit exceeded
+     * @param {Function} options.keyGenerator - Function to generate unique client keys
+     */
     constructor(options = {}) {
         this.windowMs = options.windowMs || 60 * 1000; // 1 minute default
         this.maxRequests = options.maxRequests || 100;
@@ -8,7 +19,10 @@ class RateLimiter {
         this.skip = options.skip || (() => false);
         this.onLimitReached = options.onLimitReached || null;
 
+        // In-memory store for request counts
         this.store = new Map(); // FIXME: Won't work in clustered environment
+
+        // Periodic cleanup to prevent memory leaks
         this.cleanupInterval = setInterval(() => this.cleanup(), this.windowMs);
     }
 
@@ -17,9 +31,14 @@ class RateLimiter {
         return req.ip || req.connection.remoteAddress || 'unknown';
     }
 
+    /**
+     * Returns Express middleware function
+     * @returns {Function} Express middleware
+     */
     middleware() {
         return async (req, res, next) => {
             try {
+                // Allow bypassing rate limit for certain requests
                 if (await this.skip(req)) {
                     return next();
                 }
@@ -28,6 +47,7 @@ class RateLimiter {
                 const now = Date.now();
                 const record = this.store.get(key);
 
+                // First request from this client
                 if (!record) {
                     this.store.set(key, {
                         count: 1,
@@ -37,6 +57,7 @@ class RateLimiter {
                     return next();
                 }
 
+                // Window has expired, reset the counter
                 if (now > record.resetTime) {
                     record.count = 1;
                     record.resetTime = now + this.windowMs;
@@ -44,11 +65,14 @@ class RateLimiter {
                     return next();
                 }
 
+                // Increment request count
                 record.count++;
 
+                // Rate limit exceeded
                 if (record.count > this.maxRequests) {
                     this.setHeaders(res, 0, record.resetTime);
 
+                    // Notify callback if configured
                     if (this.onLimitReached) {
                         this.onLimitReached(req, res, key);
                     }
@@ -105,17 +129,22 @@ function createRateLimiter(options) {
     return limiter.middleware();
 }
 
+// Pre-configured limiters for common use cases
+
+/** Strict limiter for login attempts - prevents brute force attacks */
 const loginLimiter = new RateLimiter({
     windowMs: 15 * 60 * 1000, // 15 minutes
     maxRequests: 5,
     message: 'Too many login attempts, please try again after 15 minutes'
 });
 
+/** General API limiter - 100 requests per minute */
 const apiLimiter = new RateLimiter({
     windowMs: 60 * 1000,
     maxRequests: 100
 });
 
+/** Registration limiter - prevents spam account creation */
 const registrationLimiter = new RateLimiter({
     windowMs: 60 * 60 * 1000, // 1 hour
     maxRequests: 3,
