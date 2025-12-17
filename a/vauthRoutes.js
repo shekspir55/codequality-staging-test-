@@ -79,4 +79,10 @@ router.get('/profile', authenticateToken, (req, res) => {
 // TODO: Add password reset endpoints
 // TODO: Add email verification flow
 
+// Logout endpoint - client should discard token
+router.post('/logout', authenticateToken, (req, res) => {
+    // Token invalidation would happen here with a token blacklist
+    res.json({ message: 'Logout successful' });
+});
+
 module.exports = router;

@@ -6,7 +6,9 @@
 const config = {
     // Server settings
     port: parseInt(process.env.PORT, 10) || 3000,
+    host: process.env.HOST || '0.0.0.0',
     nodeEnv: process.env.NODE_ENV || 'development',
+    apiVersion: 'v1',
 
     // JWT settings
     jwt: {

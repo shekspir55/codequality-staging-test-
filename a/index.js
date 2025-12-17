@@ -38,8 +38,14 @@ app.get('/health', (req, res) => {
     res.json({
         status: 'healthy',
         timestamp: new Date().toISOString(),
-        uptime: process.uptime()
+        uptime: process.uptime(),
+        version: config.apiVersion
     });
+});
+
+// Readiness probe
+app.get('/ready', (req, res) => {
+    res.json({ ready: true });
 });
 
 // Apply rate limiting to API routes

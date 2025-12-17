@@ -12,6 +12,15 @@ const LogLevel = {
 
 const LogLevelNames = ['ERROR', 'WARN', 'INFO', 'DEBUG'];
 
+// Colors for console output
+const LogColors = {
+    ERROR: '\x1b[31m',
+    WARN: '\x1b[33m',
+    INFO: '\x1b[36m',
+    DEBUG: '\x1b[90m',
+    RESET: '\x1b[0m'
+};
+
 class Logger {
     constructor(options = {}) {
         this.name = options.name || 'app';

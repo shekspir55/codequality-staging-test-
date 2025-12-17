@@ -1,6 +1,6 @@
 # Authentication API
 
-A Node.js authentication system with user management, rate limiting, and logging utilities.
+> A secure, production-ready Node.js authentication system with user management, rate limiting, and logging utilities.
 
 ## Features
 
@@ -10,10 +10,15 @@ A Node.js authentication system with user management, rate limiting, and logging
 - Configurable logging with file rotation
 - Input validation utilities
 
+## Requirements
+
+- Node.js >= 18.0.0
+- npm >= 9.0.0
+
 ## Installation
 
 ```bash
-npm install express jsonwebtoken bcrypt
+npm install
 ```
 
 ## Quick Start

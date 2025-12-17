@@ -52,6 +52,12 @@ class RateLimitError extends AppError {
     }
 }
 
+class ServiceUnavailableError extends AppError {
+    constructor(message = 'Service temporarily unavailable') {
+        super(message, 503, 'SERVICE_UNAVAILABLE');
+    }
+}
+
 /**
  * Express error handling middleware
  */
@@ -121,6 +127,7 @@ module.exports = {
     NotFoundError,
     ConflictError,
     RateLimitError,
+    ServiceUnavailableError,
     errorHandler,
     asyncHandler,
     notFoundHandler

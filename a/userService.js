@@ -149,6 +149,16 @@ class UserService extends EventEmitter {
     clearCache() {
         this.cache.clear();
     }
+
+    /**
+     * Get cache statistics
+     */
+    getCacheStats() {
+        return {
+            size: this.cache.size,
+            timeout: this.cacheTimeout
+        };
+    }
 }
 
 module.exports = UserService;
