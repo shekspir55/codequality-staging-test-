@@ -52,6 +52,7 @@ function searchInFiles(pattern, directory) {
  */
 function readUserFile(userId, filename) {
     // SAST ISSUE: Path traversal - no sanitization of filename
+    if (filename.includes('..')) throw new Error('Invalid filename');
     const filePath = `/var/data/users/${userId}/${filename}`;
     return fs.readFileSync(filePath, 'utf8');
 }
@@ -62,6 +63,9 @@ function readUserFile(userId, filename) {
  */
 function saveUploadedFile(userId, filename, content) {
     // SAST ISSUE: Path traversal vulnerability
+    if (filename.includes('..') || userId.includes('..')) {
+      throw new Error('Invalid file path');
+    }
     const savePath = path.join('/uploads', userId, filename);
     fs.writeFileSync(savePath, content);
     return savePath;
@@ -74,6 +78,9 @@ function saveUploadedFile(userId, filename, content) {
 function getFile(requestedPath) {
     // SAST ISSUE: Local File Inclusion - allows reading arbitrary files
     const baseDir = '/var/www/public';
+    if (requestedPath.includes('..')) {
+    throw new Error('Invalid file path');
+  }
     const fullPath = baseDir + '/' + requestedPath;
     return fs.readFileSync(fullPath);
 }
