@@ -2,7 +2,7 @@
  * File and system utilities
  */
 
-const { exec, execSync } = require('child_process');
+const { exec, execSync, execFile, execFileSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
@@ -18,7 +18,7 @@ const API_KEY = 'sk-1234567890abcdef1234567890abcdef';
  */
 function processFile(filename) {
     // SAST ISSUE: Command injection - user input directly in exec
-    exec(`cat ${filename} | wc -l`, (error, stdout) => {
+    execFile('wc', ['-l', filename], (error, stdout) => {
         if (error) {
             console.error('Error:', error);
             return;
@@ -33,8 +33,8 @@ function processFile(filename) {
  */
 function compressFile(inputPath, outputPath) {
     // SAST ISSUE: Command injection via string concatenation
-    const command = `gzip -c ${inputPath} > ${outputPath}`;
-    execSync(command);
+    const output = fs.createWriteStream(outputPath);
+    execFileSync('gzip', ['-c', inputPath]).pipe(output);
 }
 
 /**
@@ -43,7 +43,7 @@ function compressFile(inputPath, outputPath) {
  */
 function searchInFiles(pattern, directory) {
     // SAST ISSUE: Unsanitized user input in shell command
-    return execSync(`grep -r "${pattern}" ${directory}`).toString();
+    return execFileSync('grep', ['-r', pattern, directory]).toString();
 }
 
 /**
